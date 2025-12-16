@@ -141,9 +141,10 @@ npm run dev
 ---
 
 ## 📸 Screenshots
-
+<img width="1662" height="914" alt="Screenshot 2025-12-16 154025" src="https://github.com/user-attachments/assets/6991b7f0-ad40-4306-93ce-5650d3d7b4ab" />
 
 ---
+
 
 ## 🎯 Learning Outcomes
 
