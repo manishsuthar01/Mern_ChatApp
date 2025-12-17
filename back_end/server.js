@@ -26,7 +26,6 @@ app.use("/api/messages", messageRoutes);
 app.use("/api/users", userRoutes);
 
 
-
 app.use((req, res) => {
   res.sendFile(path.join(__dirname, "../front_end/dist/index.html"));
 });

@@ -67,9 +67,66 @@ async function receiveMessage(req, res) {
   }
 }
 
+async function reactToMessage(req, res) {
+  try {
+    const { messageId } = req.params;
+    const { emoji } = req.body;
+    const userId = req.user._id;
+
+    if (!emoji) {
+      return res.status(400).json({ msg: "Emoji required" });
+    }
+
+    const messageOfReaction = await Message.findById(messageId);
+    if (!messageOfReaction) {
+      return res.status(404).json({ msg: "Message not found" });
+    }
+
+    const reactions = messageOfReaction.reactions; //[{emoji,userId[]}]
+
+    // Find requested emoji object
+    let reqEmoji = reactions.find((r) => r.emoji === emoji);
+
+    const userAlreadyReacted = reqEmoji
+      ? reqEmoji.users.some((id) => id.toString() === userId.toString())
+      : false;
+
+    // Remove user from all reactions
+    reactions.forEach((reaction) => {
+      reaction.users = reaction.users.filter(
+        (id) => id.toString() !== userId.toString()
+      );
+    });
+
+    if (!userAlreadyReacted) {
+      if (reqEmoji) {
+        // Add user to existing emoji
+        reqEmoji.users.push(userId);
+      } else {
+        // Create new emoji entry
+        messageOfReaction.reactions.push({ emoji, users: [userId] });
+      }
+    }
+
+    messageOfReaction.reactions = messageOfReaction.reactions.filter(
+      (r) => r.users.length > 0
+    );
+
+    // Save changes
+    await messageOfReaction.save();
+
+    // Return updated reactions
+    res.status(200).json(messageOfReaction.reactions);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ msg: "Server error" });
+  }
+}
+
 module.exports = {
   sendMessage,
   receiveMessage,
+  reactToMessage,
 };
 
 // participants : {$all:[senderId,receiverId]}
