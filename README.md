@@ -169,7 +169,7 @@ npm run dev
 ## 👨‍💻 Author
 
 **Manish Suthar**
-B.Tech CSE | Frontend & Full‑Stack Developer
+B.Tech CSE | Full‑Stack Developer
 
 ---
 
