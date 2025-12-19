@@ -8,12 +8,16 @@ const Messages = () => {
   const { loading, messages } = useGetMessages();
   useListenMessages();
   const lastMessageRef = useRef();
+  const prevMessageCountRef = useRef(0);
 
   useEffect(() => {
-    setTimeout(() => {
+    if (messages.length > prevMessageCountRef.current) {
       lastMessageRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
-  }, [messages]);
+    }
+
+    prevMessageCountRef.current = messages.length;
+  }, [messages.length]);
+
   return (
     <div
       className="px-4 flex-1 overflow-auto"

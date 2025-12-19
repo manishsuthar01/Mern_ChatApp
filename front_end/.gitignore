@@ -1,0 +1,5 @@
+# Env files (Vite)
+.env
+.env.local
+.env.development
+.env.production

@@ -16,8 +16,8 @@ export const SocketContextProvider = ({ children }) => {
 
   useEffect(() => {
     if (authUser) {
-      const socket = io("https://mern-chatapp-iq3p.onrender.com", {
-         transports: ["websocket"],
+      const socket = io(import.meta.env.VITE_SOCKET_URL, {
+        transports: ["websocket"],
         query: {
           userId: authUser._id,
         },
@@ -30,6 +30,7 @@ export const SocketContextProvider = ({ children }) => {
 
       socket.on("getOnlineUsers", (users) => {
         setOnlineUsers(users);
+        console.log(onlineUsers);
       });
       return () => {
         socket.close();

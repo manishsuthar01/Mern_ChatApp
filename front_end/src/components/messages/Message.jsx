@@ -31,7 +31,7 @@ const Message = ({ message }) => {
       </div>
 
       {/* Wrapper */}
-      <div className="relative group ">
+      <div className="relative group">
         {/* Bubble */}
         <div className={`chat-bubble text-white ${bgColor} ${shakeClass}`}>
           {message.message}
@@ -68,17 +68,19 @@ const Message = ({ message }) => {
             ))}
           </div>
         )}
-
         {/* Reactions */}
         {message.reactions.length > 0 && (
           <div
             className={`absolute -bottom-3
               ${fromMe ? "right-4" : "left-4"}
               bg-base-200 px-2 py-0.5 rounded-full
-              flex gap-1 text-sm shadow`}
+              flex gap-1 text-sm shadow `}
           >
             {message.reactions.map((r) => (
-              <span key={r._id}>{r.emoji}</span>
+              <span key={r._id}>
+                {r.emoji}
+                {r.users.length > 1 && r.users.length}
+              </span>
             ))}
           </div>
         )}

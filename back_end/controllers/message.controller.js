@@ -115,8 +115,20 @@ async function reactToMessage(req, res) {
     // Save changes
     await messageOfReaction.save();
 
+    const plainReactions = messageOfReaction.reactions.map((r) => ({
+      _id: r._id.toString(),
+      emoji: r.emoji,
+      users: r.users.map((u) => u.toString()),
+    }));
+
+    // SOCKET IO FUNCTIONALITY WILL GO HERE
+
+    io.emit("reactionUpdated", {
+      messageId: messageId.toString(),
+      reactions: plainReactions,
+    });
     // Return updated reactions
-    res.status(200).json(messageOfReaction.reactions);
+    res.status(200).json(plainReactions);
   } catch (error) {
     console.error(error);
     res.status(500).json({ msg: "Server error" });
