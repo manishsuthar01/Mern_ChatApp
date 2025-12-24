@@ -3,10 +3,15 @@ import useGetMessages from "../../hooks/useGetMessages";
 import MessageSkeleton from "../skeletons/MessageSkeleton";
 import Message from "./Message";
 import useListenMessages from "../../hooks/useListenMessages";
+import useMessageStatusSocket from "../../hooks/useMessageStatusSocket";
+import useReadReceiptSocket from "../../hooks/useReadReceiptSocket";
 
 const Messages = () => {
   const { loading, messages } = useGetMessages();
   useListenMessages();
+  useMessageStatusSocket();
+  useReadReceiptSocket();
+
   const lastMessageRef = useRef();
   const prevMessageCountRef = useRef(0);
 

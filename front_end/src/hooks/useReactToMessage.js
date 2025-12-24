@@ -49,7 +49,6 @@ const useReactToMessage = () => {
       }
 
       const updatedReactions = await res.json();
-      console.log(updatedReactions);
 
       // Update local state immediately
       setMessages((msgs) =>

@@ -10,11 +10,12 @@ const Message = ({ message }) => {
   const [showPicker, setShowPicker] = useState(false);
   const { authUser } = useAuthContext();
   const { selectedConversation } = useConversation();
-  const { loading, reactToMessage } = useReactToMessage();
+  const { reactToMessage } = useReactToMessage();
 
   const fromMe = message.senderId === authUser._id;
   const formattedTime = extractTime(message.createdAt);
   const chatClassname = fromMe ? "chat-end" : "chat-start";
+
   const profilePic = fromMe
     ? authUser.profilePic
     : selectedConversation?.profilePic;
@@ -24,20 +25,34 @@ const Message = ({ message }) => {
 
   return (
     <div className={`chat ${chatClassname}`}>
+      {/* Avatar */}
       <div className="chat-image avatar">
         <div className="w-10 rounded-full">
-          <img src={profilePic} alt="MessComp" />
+          <img src={profilePic} alt="avatar" />
         </div>
       </div>
 
       {/* Wrapper */}
       <div className="relative group">
         {/* Bubble */}
-        <div className={`chat-bubble text-white ${bgColor} ${shakeClass}`}>
-          {message.message}
+        <div
+          className={`chat-bubble text-white ${bgColor} ${shakeClass}
+          relative pr-14 pb-4`}
+        >
+          {/* Message text */}
+          <span className="">{message.message}</span>
+
+          {/* Time + Status */}
+          <div
+            className="absolute bottom-1 right-0 flex items-center gap-1
+            text-[11px] opacity-70 leading-none px-0.5"
+          >
+            <span>{formattedTime}</span>
+            {fromMe && <MessageStatus status={message.status || "sent"} />}
+          </div>
         </div>
 
-        {/* ➕ Button */}
+        {/* ➕ Reaction button */}
         <button
           onClick={() => setShowPicker((p) => !p)}
           className={`absolute top-1/2 -translate-y-1/2
@@ -68,13 +83,14 @@ const Message = ({ message }) => {
             ))}
           </div>
         )}
+
         {/* Reactions */}
-        {message.reactions.length > 0 && (
+        {message.reactions?.length > 0 && (
           <div
-            className={`absolute -bottom-3
-              ${fromMe ? "right-4" : "left-4"}
-              bg-base-200 px-2 py-0.5 rounded-full
-              flex gap-1 text-sm shadow `}
+            className={`absolute -bottom-3.5
+              ${fromMe ? "right-5" : "left-4"}
+              bg-base-200 px-2 py-0 rounded-full
+              flex gap-1 text-sm shadow`}
           >
             {message.reactions.map((r) => (
               <span key={r._id}>
@@ -85,10 +101,26 @@ const Message = ({ message }) => {
           </div>
         )}
       </div>
-
-      <div className="chat-footer opacity-50 text-xs">{formattedTime}</div>
     </div>
   );
 };
 
 export default Message;
+
+const MessageStatus = ({ status }) => {
+  if (!status) return null;
+
+  if (status === "sent") {
+    return <span className="text-gray-100 text-xs">✓</span>;
+  }
+
+  if (status === "delivered") {
+    return <span className="text-gray-400 text-xs">✓✓</span>;
+  }
+
+  if (status === "read") {
+    return <span className="text-black text-xs">✓✓</span>;
+  }
+
+  return null;
+};

@@ -6,7 +6,6 @@ const useSendMessages = () => {
   const [loading, setLoading] = useState(false);
   const { messages, setMessages, selectedConversation } = useConversation();
 
-
   const sendMessage = async (input) => {
     if (!selectedConversation) {
       toast.error("No conversation selected");
@@ -32,7 +31,13 @@ const useSendMessages = () => {
         throw new Error(data.error || "Failed to send message");
       }
 
-      setMessages((prev) => [...prev, data]);
+      setMessages((prev) => [
+        ...prev,
+        {
+          ...data,
+          status: "sent",
+        },
+      ]);
     } catch (error) {
       toast.error(error.message);
     } finally {

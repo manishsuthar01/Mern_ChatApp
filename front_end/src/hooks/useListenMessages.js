@@ -1,25 +1,43 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import useConversation from "../zustand/useConversation";
 import { useSocketContext } from "../context/SocketContex";
 import notificationSound from "../assets/sounds/notificationSound.mp3";
 
 const useListenMessages = () => {
-  const { messages, setMessages } = useConversation();
+  const { setMessages, selectedConversation } = useConversation();
   const { socket } = useSocketContext();
 
   useEffect(() => {
-    socket?.on("newMessage", (newMessage) => {
-      console.log("RECEIVED MESSAGE:", newMessage);
-      newMessage.shouldShake = true;
-      const sound = new Audio(notificationSound);
-      sound.play();
-      setMessages((prev) => [...prev, newMessage]);
-    });
+    if (!socket) return;
+
+    const handleNewMessage = (newMessage) => {
+      // ✅ ALWAYS emit delivered (receiver is online)
+      socket.emit("message:delivered", {
+        messageId: newMessage._id,
+      });
+
+      const isCurrentChat =
+        selectedConversation?._id === newMessage.senderId;
+
+      newMessage.status = isCurrentChat ? "read" : "delivered";
+      newMessage.shouldShake = !isCurrentChat;
+
+      if (isCurrentChat) {
+        new Audio(notificationSound).play();
+      }
+
+      // ✅ Only append message if it belongs to active conversation
+      if (isCurrentChat) {
+        setMessages((prev) => [...prev, newMessage]);
+      }
+    };
+
+    socket.on("newMessage", handleNewMessage);
 
     return () => {
-      socket.off("newMessage");
+      socket.off("newMessage", handleNewMessage);
     };
-  }, [socket, messages]);
+  }, [socket, selectedConversation?._id, setMessages]);
 };
 
 export default useListenMessages;

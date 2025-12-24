@@ -15,7 +15,7 @@ const messageSchema = new mongoose.Schema(
     },
     message: {
       type: String,
-      require: true,
+      required: true,
     },
     reactions: [
       {
@@ -31,7 +31,34 @@ const messageSchema = new mongoose.Schema(
         ],
       },
     ],
+    deliveredTo: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        deliverdeAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
+    readBy: [
+      {
+        userId: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "User",
+          required: true,
+        },
+        readAt: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
+
   { timestamps: true } // createAt , updatedAt
 );
 
